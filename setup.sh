@@ -14,3 +14,4 @@ function main() {
 
 tput reset
 main "$(dirname ${0})"
+

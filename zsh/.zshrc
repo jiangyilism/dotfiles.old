@@ -33,3 +33,4 @@ function precmd() {
 
 start_cmd_timer
 
+source ~/.brimstonerc

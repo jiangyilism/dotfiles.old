@@ -2,11 +2,23 @@ alias apt='sudo apt'
 alias code='code -g'
 alias df='df --human-readable --local --exclude-type="tmpfs"'
 alias du='du --human-readable'
+alias free='free --human --total'
+alias fstrim='sudo fstrim --verbose'
 alias grep='grep --color=auto --exclude-dir=.git --binary-files=without-match --line-number'
 alias ll='ls -l --classify --human-readable'
 alias ls='ls --color=auto --all'
 alias open='xdg-open'
+alias poweroff='sudo poweroff'
+alias updatedb='sudo updatedb'
+alias reboot='sudo reboot'
 alias reset='tput reset'
+
+function dates() {
+	for timezone in Asia/Saigon Asia/Taipei Europe/Berlin; do
+		printf "%-18s " "${timezone}"
+		TZ="${timezone}" date
+	done
+}
 
 function toolchain_env_clear() {
 	unset CXX
@@ -116,23 +128,23 @@ cmd_exe_time_file="/tmp/${USER}.${$}.cmd_exe_time"
 trap 'rm -f ${cmd_timestamp_file} ${cmd_exe_time_file}' EXIT
 
 function seconds_to_str() {
-	local -r total_sec=${1:-0}
+	local -r total_sec="${1:-0}"
 	local -r sec=$((total_sec % 60))
 	local -r min=$(((total_sec / 60) % 60))
 	local -r hour=$(((total_sec / 3600) % 60))
 	local -r day=$(((total_sec / 86400)))
 
-	[[ ${day} -gt 0 ]] && printf '%dd' ${day}
-	[[ ${hour} -gt 0 ]] && printf '%02dh' ${hour}
-	[[ ${min} -gt 0 ]] && printf '%02dm' ${min}
-	printf '%02ds' ${sec}
+	[[ "${day}" -gt 0 ]] && printf '%dd' "${day}"
+	[[ "${hour}" -gt 0 ]] && printf '%02dh' "${hour}"
+	[[ "${min}" -gt 0 ]] && printf '%02dm' "${min}"
+	printf '%02ds' "${sec}"
 }
 
 function time_elapsed_since() {
 	local -r timestamp0="$(date +'%D %H:%M:%S')"
 	local -r timestamp1="${1}"
-	local -r sec0=$(date -d "${timestamp0}" +%s)
-	local -r sec1=$(date -d "${timestamp1}" +%s)
+	local -r sec0="$(date -d "${timestamp0}" +%s)"
+	local -r sec1="$(date -d "${timestamp1}" +%s)"
 
 	echo $(seconds_to_str $((sec0 - sec1)))
 }
@@ -140,8 +152,8 @@ function time_elapsed_since() {
 function prompt_command() {
 	local -r exit_code=${?}
 
-	if [[ -f ${cmd_exe_time_file} ]]; then
-		cat ${cmd_exe_time_file}
+	if [[ -f "${cmd_exe_time_file}" ]]; then
+		cat "${cmd_exe_time_file}"
 		return
 	fi
 
@@ -152,8 +164,8 @@ function prompt_command() {
 }
 
 function start_cmd_timer() {
-  date +'%D %H:%M:%S' > ${cmd_timestamp_file}
-  rm -f ${cmd_exe_time_file}
+  date +'%D %H:%M:%S' > "${cmd_timestamp_file}"
+  rm -f "${cmd_exe_time_file}"
 }
 
 export PATH="${PATH}:${HOME}/git_utils"
@@ -161,3 +173,4 @@ export PATH="${PATH}:${HOME}/git_utils"
 if [[ -f "${HOME}/.shrc_additional" ]]; then
 	. "${HOME}/.shrc_additional"
 fi
+

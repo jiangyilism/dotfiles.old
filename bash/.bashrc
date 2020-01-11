@@ -26,3 +26,4 @@ if ! shopt -oq posix; then
   fi
 fi
 
+source ~/.brimstonerc

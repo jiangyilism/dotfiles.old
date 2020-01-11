@@ -16,7 +16,8 @@ function main() {
 	fi
 
 	git commit --fixup="${commit_id}"
-	GIT_SEQUENCE_EDITOR=: git rebase --verbose --autostash --interactive "${commit_id}~1"
+	GIT_SEQUENCE_EDITOR=: git rebase --verbose \
+		--autosquash --autostash --interactive "${commit_id}~1"
 }
 
 main "${@}"

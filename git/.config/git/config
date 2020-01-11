@@ -4,6 +4,7 @@
 	branch-name = rev-parse --abbrev-ref HEAD
 	co = checkout
 	df = diff -w
+	lg = log
 	ls = log --oneline
 	sh = show -w
 	st = status
@@ -38,6 +39,7 @@
 	algorithm = histogram
 	context = 8
 	tool = vimdiff
+	wsErrorHighlight = all
 [difftool]
 	prompt = false
 [gitflow "prefix"]
