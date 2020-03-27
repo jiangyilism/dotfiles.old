@@ -1,12 +1,14 @@
 alias apt='sudo apt'
 alias code='code -g'
 alias df='df --human-readable --local --exclude-type="tmpfs"'
+alias dmesg='dmesg -T'
 alias du='du --human-readable'
 alias free='free --human --total'
 alias fstrim='sudo fstrim --verbose'
 alias grep='grep --color=auto --exclude-dir=.git --binary-files=without-match --line-number'
 alias ll='ls -l --classify --human-readable'
 alias ls='ls --color=auto --all'
+alias lspci='sudo lspci'
 alias open='xdg-open'
 alias poweroff='sudo poweroff'
 alias updatedb='sudo updatedb'
@@ -28,40 +30,55 @@ function toolchain_env_clear() {
 	unset CFLAGS
 	unset CXXFLAGS
 	unset LDFLAGS
+	unset LSAN_OPTIONS
+	unset UBSAN_OPTIONS
+	unset CMAKE_BUILD_PARALLEL_LEVEL
+	unset CMAKE_EXPORT_COMPILE_COMMANDS
+	unset CMAKE_GENERATOR
+}
+
+function toolchain_env_setup() {
+	export CFLAGS="-O2 -march=native -pipe -Wall -Wextra -Wmissing-declarations -Wnull-dereference -Wredundant-decls -Wshadow"
+	export CXXFLAGS="${CFLAGS} -Wctor-dtor-privacy -Wnon-virtual-dtor -Wold-style-cast -Wzero-as-null-pointer-constant"
+	export LDFLAGS="-Wl,-O2 -Wl,--as-needed"
+	export LSAN_OPTIONS="verbosity=1:log_threads=1"
+	export UBSAN_OPTIONS="print_stacktrace=1"
+	export CMAKE_BUILD_PARALLEL_LEVEL="$(($(nproc) - 1))"
+	export CMAKE_EXPORT_COMPILE_COMMANDS=ON
+	#export CMAKE_GENERATOR="Ninja"
+	export CMAKE_GENERATOR="Unix Makefiles"
 }
 
 function gcc_env_setup() {
-	local -r toolchain_dir=$(dirname $(which gcc))
+	local -r toolchain_dir="$(dirname $(which gcc))"
 
-	if [[ ! -d ${toolchain_dir} ]]; then
-		echo "no clang found"
+	if [[ ! -d "${toolchain_dir}" ]]; then
+		echo "no gcc found"
 		return 1
 	fi
 
-	export CXX=${toolchain_dir}/g++
-	export CC=${toolchain_dir}/gcc
-	export AR=${toolchain_dir}/gcc-ar
-	export RANLIB=${toolchain_dir}/gcc-ranlib
-	export CFLAGS="-O2 -march=native -pipe -Wall -Wextra -Wmissing-declarations -Wnull-dereference -Wredundant-decls -Wshadow"
-	export CXXFLAGS="${CFLAGS} -Wctor-dtor-privacy -Wnon-virtual-dtor -Wold-style-cast -Wzero-as-null-pointer-constant"
-	export LDFLAGS="-Wl,-O2 -Wl,--as-needed"
+	export CXX="${toolchain_dir}/g++"
+	export CC="${toolchain_dir}/gcc"
+	export AR="${toolchain_dir}/gcc-ar"
+	export RANLIB="${toolchain_dir}/gcc-ranlib"
+
+	toolchain_env_setup
 }
 
 function clang_env_setup() {
-	local -r toolchain_dir=$(dirname $(which clang))
+	local -r toolchain_dir="$(dirname $(which clang))"
 
-	if [[ ! -d ${toolchain_dir} ]]; then
+	if [[ ! -d "${toolchain_dir}" ]]; then
 		echo "no clang found"
 		return 1
 	fi
 
-	export CXX=${toolchain_dir}/clang++
-	export CC=${toolchain_dir}/clang
-	export AR=${toolchain_dir}/llvm-ar
-	export RANLIB=${toolchain_dir}/llvm-ranlib
-	export CFLAGS="-O2 -march=native -pipe -Wall -Wextra -Wmissing-declarations -Wnull-dereference -Wredundant-decls -Wshadow"
-	export CXXFLAGS="${CFLAGS} -Wctor-dtor-privacy -Wnon-virtual-dtor -Wold-style-cast -Wzero-as-null-pointer-constant"
-	export LDFLAGS="-Wl,-O2 -Wl,--as-needed"
+	export CXX="${toolchain_dir}/clang++"
+	export CC="${toolchain_dir}/clang"
+	export AR="${toolchain_dir}/llvm-ar"
+	export RANLIB="${toolchain_dir}/llvm-ranlib"
+
+	toolchain_env_setup
 }
 
 function cd() {
@@ -173,4 +190,3 @@ export PATH="${PATH}:${HOME}/git_utils"
 if [[ -f "${HOME}/.shrc_additional" ]]; then
 	. "${HOME}/.shrc_additional"
 fi
-

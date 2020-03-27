@@ -63,6 +63,8 @@
 	enabled = 1
 [reset]
 	quiet = false
+[sendemail]
+	confirm = always
 [sequence]
 	editor = vim
 [user]
