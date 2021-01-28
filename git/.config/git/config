@@ -37,6 +37,7 @@
 	whitespace = fix,space-before-tab,trailing-space,cr-at-eol,-indent-with-non-tab
 [diff]
 	algorithm = histogram
+	colorMoved = dimmed-zebra
 	context = 8
 	tool = vimdiff
 	wsErrorHighlight = all
@@ -51,13 +52,16 @@
 [github]
 	token = token
 	user = jiangyilism
+[merge]
+	autoStash = true
 [pull]
 	rebase = true
 [push]
 	default = current
 [rebase]
 	abbreviateCommands = true
-	autosquash = true
+	autoSquash = true
+	autoStash = true
 [rerere]
 	autoupdate = 1
 	enabled = 1
